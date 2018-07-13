@@ -21,58 +21,60 @@ public class Explanation extends TranslationSegment {
 	public String getContent() {
 		return String.format("##--[  %s%n%n%s", title, tree.getContent());
 	}
-
+	public ExplanationContentTree getTree() {return tree;}
 }
-class ExplanationContentTree {
+
+class ExplanationContentTree extends ContentTree {
 	public String[] types;
-	public BigBlock bigBlock;
+	public ExplanationBigBlock ExplanationBigBlock;
 	public ExplanationContentTree(String text) {
-		bigBlock = new BigBlock(text);
+		ExplanationBigBlock = new ExplanationBigBlock(text);
 	}
 	public String getContent() {
-		return bigBlock.getContent();
+		return ExplanationBigBlock.getContent();
 	}
 }
 
-class BigBlock{
-	public MiddleBlock[] middleBlocks;
-	public BigBlock(String text) {
-		String[] rawBlocks = text.split("\\d+\\)\\s*");
-		rawBlocks = Arrays.copyOfRange(rawBlocks, 1, rawBlocks.length);
-		middleBlocks = new MiddleBlock[rawBlocks.length];
+class ExplanationBigBlock{
+	public ExplanationMiddleBlock[] ExplanationMiddleBlocks;
+	public ExplanationBigBlock(String text) {
+		String[] rawBlocks = text.split("(?<!\\()\\d+\\)\\s*");
+		if (rawBlocks.length > 1)
+			rawBlocks = Arrays.copyOfRange(rawBlocks, 1, rawBlocks.length);
+		ExplanationMiddleBlocks = new ExplanationMiddleBlock[rawBlocks.length];
 		for (int i = 0; i < rawBlocks.length; i++) {
-			middleBlocks[i] = new MiddleBlock(rawBlocks[i]);
+			ExplanationMiddleBlocks[i] = new ExplanationMiddleBlock(rawBlocks[i]);
 		}
 	}
 	public String getContent() {
 		String res = "";
-		for (MiddleBlock mb : middleBlocks) {
+		for (ExplanationMiddleBlock mb : ExplanationMiddleBlocks) {
 			res += mb.getContent();
 		}
-		res+="\n";
 		return res;
 	}
 }
 
-class MiddleBlock {
+class ExplanationMiddleBlock {
 	public String modification;
 	public String type;
-	public SmallBlock[] smallBlocks;
-	public static Pattern pattern = Pattern.compile("^([\\s\\S]*)\\[([^\\]]*)\\]\\s*(\\d+\\.[\\s\\S]+)\\s*$");
-	public MiddleBlock(String text) {
+	public ExplanationSmallBlock[] ExplanationSmallBlocks;
+	public static Pattern pattern = Pattern.compile("^([\\s\\S]*)\\[([^\\]]*)\\]\\s*([\\s\\S]+)\\s*$");
+	public ExplanationMiddleBlock(String text) {
+		text = TextVariations.standartize(text);
 		Matcher matcher = pattern.matcher(text);
 		matcher.find();
-		modification = matcher.group(1);
-		type = matcher.group(2);
+		modification = TextVariations.standartize(matcher.group(1));
+		type = TextVariations.standartize(matcher.group(2));
 		String[] rawBlocks = matcher.group(3).replaceAll("(?<!^)\\s*\\d+\\.\\s*", "\n").replaceAll("\\s*\\d+\\.\\s*", "").split("\\n");
-		smallBlocks = new SmallBlock[rawBlocks.length];
+		ExplanationSmallBlocks = new ExplanationSmallBlock[rawBlocks.length];
 		for (int i = 0; i < rawBlocks.length; i++) {
-			smallBlocks[i] = new SmallBlock(rawBlocks[i]);
+			ExplanationSmallBlocks[i] = new ExplanationSmallBlock(rawBlocks[i]);
 		}
 	}
 	public String getContent() {
 		String res = (modification.length() > 0 ? modification + " -- ":"") + type + "\n";
-		for (SmallBlock smb : smallBlocks) {
+		for (ExplanationSmallBlock smb : ExplanationSmallBlocks) {
 			res += smb.getContent();
 		}
 		res += "\n";
@@ -80,16 +82,16 @@ class MiddleBlock {
 	}
 }
 
-class SmallBlock {
+class ExplanationSmallBlock {
 	public String res, expl;
-	public static Pattern pattern = Pattern.compile("^\\s*([^:]+)\\s*:\\s*(?:([^:]+):)?\\s*$");
-	public SmallBlock(String text) {
+	public static Pattern pattern = Pattern.compile("\\s*(?:\\(([^)]+)\\)\\s*:)?([^:]+)\\s*:\\s*(?:([^:]+):)?\\s*");
+	public ExplanationSmallBlock(String text) {
 		Matcher matcher = pattern.matcher(text);
 		matcher.find();
-		res = matcher.group(1);
-		expl = matcher.group(2);
+		res = TextVariations.standartize(matcher.group(2));
+		expl = TextVariations.standartize(matcher.group(3));
 	}
 	public String getContent() {
-		return String.format(res + (expl!=null && expl.length()>0?" - " + expl:"")+"\n");
+		return res + (expl!=null && expl.length()>0?" - " + expl:"")+"\n";
 	}
 }

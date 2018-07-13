@@ -6,73 +6,74 @@ import java.util.regex.Pattern;
 
 import org.jsoup.nodes.Element;
 
-public class Synonyms extends TranslationSegment {
+public class Antonyms extends TranslationSegment {
 	private String title;
 	private String body;
-	private SynonymsContentTree tree;
+	private AntonymsContentTree tree;
 	@Override
 	public void initContent(Element element) {
 		title = getTitle(element);
 		body = getBody(element);
-		tree = new SynonymsContentTree(body);
+		tree = new AntonymsContentTree(body);
 	}
 
 	@Override
 	public String getContent() {
 		return String.format("##--[  %s%n%n%s", title, tree.getContent());
 	}
-	public SynonymsContentTree getTree() {return tree;}
+	
+	public AntonymsContentTree getTree() {return tree;}
 }
 
-class SynonymsContentTree extends ContentTree{
+class AntonymsContentTree extends ContentTree {
 	public String[] types;
-	public SynonymsBigBlock SynonymsBigBlock;
-	public SynonymsContentTree(String text) {
-		SynonymsBigBlock = new SynonymsBigBlock(text);
+	public AntonymsBigBlock AntonymsBigBlock;
+	public AntonymsContentTree(String text) {
+		AntonymsBigBlock = new AntonymsBigBlock(text);
 	}
 	public String getContent() {
-		return SynonymsBigBlock.getContent();
+		return AntonymsBigBlock.getContent();
 	}
 }
 
-class SynonymsBigBlock{
-	public SynonymsMiddleBlock[] SynonymsMiddleBlocks;
-	public SynonymsBigBlock(String text) {
+class AntonymsBigBlock{
+	public AntonymsMiddleBlock[] AntonymsMiddleBlocks;
+	public AntonymsBigBlock(String text) {
 		String[] rawBlocks = text.split("\\d+\\)\\s*");
-		if (rawBlocks.length > 1)
+		if (rawBlocks.length>1)
 			rawBlocks = Arrays.copyOfRange(rawBlocks, 1, rawBlocks.length);
-		SynonymsMiddleBlocks = new SynonymsMiddleBlock[rawBlocks.length];
+		AntonymsMiddleBlocks = new AntonymsMiddleBlock[rawBlocks.length];
 		for (int i = 0; i < rawBlocks.length; i++) {
-			SynonymsMiddleBlocks[i] = new SynonymsMiddleBlock(rawBlocks[i]);
+			AntonymsMiddleBlocks[i] = new AntonymsMiddleBlock(rawBlocks[i]);
 		}
 	}
 	public String getContent() {
 		String res = "";
-		for (SynonymsMiddleBlock mb : SynonymsMiddleBlocks) {
+		for (AntonymsMiddleBlock mb : AntonymsMiddleBlocks) {
 			res += mb.getContent();
 		}
 		return res;
 	}
 }
 
-class SynonymsMiddleBlock {
+class AntonymsMiddleBlock {
 	public String type;
-	public SynonymsSmallBlock[] SynonymsSmallBlocks;
-	public static Pattern pattern = Pattern.compile("^\\s*([ա-ևԱ-Ֆ]*\\.)\\s*([\\s\\S]+)\\s*$");
-	public SynonymsMiddleBlock(String text) {
+	public AntonymsSmallBlock[] AntonymsSmallBlocks;
+	public static Pattern pattern = Pattern.compile("^\\s*([ա-ևԱ-Ֆ]*\\.)?\\s*([\\s\\S]+)\\s*$");
+	public AntonymsMiddleBlock(String text) {
 		text = TextVariations.standartize(text);
 		Matcher matcher = pattern.matcher(text);
 		matcher.find();
 		type = TextVariations.standartize(matcher.group(1));
 		String[] rawBlocks = matcher.group(2).replaceAll("(?<!^)\\s*\\d+\\.\\s*", "\n").replaceAll("\\s*\\d+\\.\\s*", "").split("\\n");
-		SynonymsSmallBlocks = new SynonymsSmallBlock[rawBlocks.length];
+		AntonymsSmallBlocks = new AntonymsSmallBlock[rawBlocks.length];
 		for (int i = 0; i < rawBlocks.length; i++) {
-			SynonymsSmallBlocks[i] = new SynonymsSmallBlock(rawBlocks[i]);
+			AntonymsSmallBlocks[i] = new AntonymsSmallBlock(rawBlocks[i]);
 		}
 	}
 	public String getContent() {
-		String res = type + " - ";
-		for (SynonymsSmallBlock smb : SynonymsSmallBlocks) {
+		String res = (type!=null && type.length()>0?type + " - ":"");
+		for (AntonymsSmallBlock smb : AntonymsSmallBlocks) {
 			res += smb.getContent();
 		}
 		res += "\n";
@@ -80,9 +81,9 @@ class SynonymsMiddleBlock {
 	}
 }
 
-class SynonymsSmallBlock {
+class AntonymsSmallBlock {
 	public String[] ress;
-	public SynonymsSmallBlock(String text) {
+	public AntonymsSmallBlock(String text) {
 		ress = TextVariations.standartize(text).split("\\s*(,)\\s*");
 		for (int i = 0; i<ress.length;i++) {
 			ress[i] = TextVariations.standartize(ress[i]);
