@@ -17,7 +17,7 @@ public class WebParser {
 		Scanner scanner = new Scanner(System.in);
 		String word = "";
 		while (true) {
-			System.out.print("Ներմուծեք բառ - ");
+			System.out.print("Փնտրել - ");
 			word = scanner.nextLine();
 			if (word.length()==0 || word=="stop" || word=="Stop") {
 				log("Շնորհակալություն ծրագրից օգտվելու համար։");

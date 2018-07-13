@@ -58,11 +58,11 @@ class SynonymsBigBlock{
 class SynonymsMiddleBlock {
 	public String type;
 	public SynonymsSmallBlock[] SynonymsSmallBlocks;
-	public static Pattern pattern = Pattern.compile("^\\s*([ա-ևԱ-Ֆ]*\\.)\\s*([\\s\\S]+)\\s*$");
+	public static Pattern pattern = Pattern.compile("^\\s*([ա-ևԱ-Ֆ]*\\.)?\\s*([\\s\\S]+)\\s*$");
 	public SynonymsMiddleBlock(String text) {
 		text = TextVariations.standartize(text);
 		Matcher matcher = pattern.matcher(text);
-		matcher.find();
+		if (!matcher.find()) return;
 		type = TextVariations.standartize(matcher.group(1));
 		String[] rawBlocks = matcher.group(2).replaceAll("(?<!^)\\s*\\d+\\.\\s*", "\n").replaceAll("\\s*\\d+\\.\\s*", "").split("\\n");
 		SynonymsSmallBlocks = new SynonymsSmallBlock[rawBlocks.length];
@@ -71,7 +71,8 @@ class SynonymsMiddleBlock {
 		}
 	}
 	public String getContent() {
-		String res = type + " - ";
+		String res = (type!=null?type + " - ":"");
+		if (SynonymsSmallBlocks!=null)
 		for (SynonymsSmallBlock smb : SynonymsSmallBlocks) {
 			res += smb.getContent();
 		}

@@ -63,7 +63,7 @@ class ExplanationMiddleBlock {
 	public ExplanationMiddleBlock(String text) {
 		text = TextVariations.standartize(text);
 		Matcher matcher = pattern.matcher(text);
-		matcher.find();
+		if (!matcher.find()) return;
 		modification = TextVariations.standartize(matcher.group(1));
 		type = TextVariations.standartize(matcher.group(2));
 		String[] rawBlocks = matcher.group(3).replaceAll("(?<!^)\\s*\\d+\\.\\s*", "\n").replaceAll("\\s*\\d+\\.\\s*", "").split("\\n");
@@ -74,6 +74,7 @@ class ExplanationMiddleBlock {
 	}
 	public String getContent() {
 		String res = (modification.length() > 0 ? modification + " -- ":"") + type + "\n";
+		if (ExplanationSmallBlocks != null)
 		for (ExplanationSmallBlock smb : ExplanationSmallBlocks) {
 			res += smb.getContent();
 		}

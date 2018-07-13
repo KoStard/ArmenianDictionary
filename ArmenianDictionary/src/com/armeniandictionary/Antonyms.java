@@ -63,7 +63,7 @@ class AntonymsMiddleBlock {
 	public AntonymsMiddleBlock(String text) {
 		text = TextVariations.standartize(text);
 		Matcher matcher = pattern.matcher(text);
-		matcher.find();
+		if (!matcher.find()) return;
 		type = TextVariations.standartize(matcher.group(1));
 		String[] rawBlocks = matcher.group(2).replaceAll("(?<!^)\\s*\\d+\\.\\s*", "\n").replaceAll("\\s*\\d+\\.\\s*", "").split("\\n");
 		AntonymsSmallBlocks = new AntonymsSmallBlock[rawBlocks.length];
@@ -73,6 +73,7 @@ class AntonymsMiddleBlock {
 	}
 	public String getContent() {
 		String res = (type!=null && type.length()>0?type + " - ":"");
+		if (AntonymsSmallBlocks!=null)
 		for (AntonymsSmallBlock smb : AntonymsSmallBlocks) {
 			res += smb.getContent();
 		}
