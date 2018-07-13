@@ -14,19 +14,18 @@ public class WebParser {
 	public Pattern pattern = Pattern.compile("(?<=[^\\n\\d])(?=\\d+(\\.|\\)) )");
 
 	public WebParser() {
-//		Scanner scanner = new Scanner(System.in);
-//		String word = "";
-//		while (true) {
-//			System.out.print("Ներմուծեք բառ - ");
-//			word = scanner.nextLine();
-//			if (word.length()==0 || word=="stop" || word=="Stop") {
-//				log("Շնորհակալություն ծրագրից օգտվելու համար։");
-//				scanner.close();
-//				System.exit(0);
-//			}
-//			search(word);
-//		}
-		search("բարդ");
+		Scanner scanner = new Scanner(System.in);
+		String word = "";
+		while (true) {
+			System.out.print("Ներմուծեք բառ - ");
+			word = scanner.nextLine();
+			if (word.length()==0 || word=="stop" || word=="Stop") {
+				log("Շնորհակալություն ծրագրից օգտվելու համար։");
+				scanner.close();
+				System.exit(0);
+			}
+			search(word);
+		}
 	}
 	
 	public String wrap(String str) {
@@ -69,61 +68,17 @@ public class WebParser {
 	}
 	
 	public void represent(Document doc) {
-		Elements els = doc.getElementsByClass("word-body"); // բացատրություն
-		
+		if (doc == null) return;
+		Elements els = doc.getElementsByClass("word-body");
+		if (els.size() == 0) {
+			System.out.println("Ոչինչ չի գտնվել։");
+			return;
+		}
 		Word word = new Word(els);
-		
-//		Element element = els.get(0);
-//		log(element.getElementsByClass("word-h1").get(0).text().split(" - ")[1]);
-//		log(element.getElementsByClass("word-content").get(0).text());
-//		log(new String(new char[wrapLength]).replace("\0", "-"));
-//
-//		element = els.get(1); // հոմանիշներ
-//		log(element.getElementsByClass("word-h1").get(0).text().split(" - ")[1]);
-//		String content = element.getElementsByClass("word-content").get(0).text(); 
-//		if (content.length() > 0) {
-//			content = content.substring(3);
-//		}
-//		log(content);
-//		log(new String(new char[wrapLength]).replace("\0", "-"));
-//		
-//		element = els.get(2); // ռուսերեն
-//		log(element.getElementsByClass("word-h1").get(0).text().split(" - ")[1]);
-//		content = element.getElementsByClass("word-content").get(0).text(); 
-//		if (content.length() > 0) {
-//			content = content.substring(2).replace("\n", "");
-//			String[] parts = content.split(" [◊♢] ");
-//			if (parts.length > 1) {
-//				parts[1] = parts[1].replace(". ", ".\n");
-//				content = String.join("\n-----\n", parts);
-//			}
-//		}
-//		log(content);
-//		log(new String(new char[wrapLength]).replace("\0", "-"));
-//
-//		element = els.get(3); // անգլերեն
-//		log(element.getElementsByClass("word-h1").get(0).text().split(" - ")[1]);
-//		log(element.getElementsByClass("word-content").get(0).text());
-//		log(new String(new char[wrapLength]).replace("\0", "-"));
-		
+		System.out.println(word.getContent());
 	}
 	
 	public static void main(String[] args) {
 		new WebParser();
-//		new ContentTree("1)\n" + 
-//				"\n" + 
-//				"[ածական]\n" + 
-//				"1. Դիզված, կուտակված: Բարդ ամպեր:\n" + 
-//				"2. Շատ մասերից կամ տարրերից բաղկացած: \n" + 
-//				"3. Դժվարին, խրթին, դժվարալույծ: Բարդ հարց՝ խնդիր: \n" + 
-//				"4. Խճճված, խառնակ: Բարդ գործ: \n" + 
-//				"5. Դժվար, ծանր: Բարդ աշխատանք:\n" + 
-//				"\n" + 
-//				"2)\n" + 
-//				"\n" + 
-//				"բարդի, [գոյական] \n" + 
-//				"1. Չորացրած խոտի՝ դեզ բաղկացած 30-40 խուրձից (ըստ տարբեր տեղերի): \n" + 
-//				"2. Մի երեսնյակ: Բարդ խոտ( = 30 խուրձ): \n" + 
-//				"3. (գավառական) Վարս, ծամ: Ախ, էնոր բաժ խորոտ էր, քանց բաժն իմ բարդի (Ս. Տարոնցի):");
 	}
 }
